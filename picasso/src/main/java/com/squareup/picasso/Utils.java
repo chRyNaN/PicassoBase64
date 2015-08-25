@@ -28,12 +28,16 @@ import android.os.Message;
 import android.os.Process;
 import android.os.StatFs;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
+
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.concurrent.ThreadFactory;
 
@@ -312,6 +316,7 @@ final class Utils {
   }
 
   static byte[] toByteArray(InputStream input) throws IOException {
+    /*
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     byte[] buffer = new byte[1024 * 4];
     int n;
@@ -319,6 +324,34 @@ final class Utils {
       byteArrayOutputStream.write(buffer, 0, n);
     }
     return byteArrayOutputStream.toByteArray();
+    */
+
+    StringBuilder sb;
+    BufferedReader br = null;
+    try {
+      sb = new StringBuilder();
+      String line;
+      br = new BufferedReader(new InputStreamReader(input));
+      while ((line = br.readLine()) != null) {
+        sb.append(line);
+      }
+    } catch (IOException e) {
+      throw new IOException("Error reading InputStream.");
+    } finally {
+      if (br != null) {
+        try {
+          br.close();
+        } catch (IOException e) {
+          throw new IOException("Error closing BufferedReader.");
+        }
+      }
+    }
+    String result = sb.toString();
+    int c = result.indexOf(",");
+      if(c != -1){
+          result = result.substring(c + 1);
+      }
+      return Base64.decode(result, Base64.DEFAULT);
   }
 
   static boolean isWebPFile(InputStream stream) throws IOException {

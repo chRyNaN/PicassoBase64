@@ -149,7 +149,8 @@ class BitmapHunter implements Runnable {
 
         markStream.reset(mark);
       }
-      Bitmap bitmap = BitmapFactory.decodeStream(stream, null, options);
+      byte[] bytes = Utils.toByteArray(stream);
+      Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
       if (bitmap == null) {
         // Treat null as an IO exception, we will eventually retry.
         throw new IOException("Failed to decode stream.");
