@@ -1,7 +1,7 @@
 Picasso
 =======
 
-A powerful image downloading and caching library for Android. This forked version is updated with Base64 support.
+A powerful image downloading and caching library for Android
 
 ![](website/static/sample.png)
 
