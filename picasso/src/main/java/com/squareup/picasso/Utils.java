@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -142,6 +143,7 @@ final class Utils {
     }
   }
 
+  @TargetApi(Build.VERSION_CODES.CUPCAKE)
   static boolean isMain() {
     return Looper.getMainLooper().getThread() == Thread.currentThread();
   }
@@ -284,6 +286,7 @@ final class Utils {
     return Math.max(Math.min(size, MAX_DISK_CACHE_SIZE), MIN_DISK_CACHE_SIZE);
   }
 
+  @TargetApi(Build.VERSION_CODES.ECLAIR)
   static int calculateMemoryCacheSize(Context context) {
     ActivityManager am = getService(context, ACTIVITY_SERVICE);
     boolean largeHeap = (context.getApplicationInfo().flags & FLAG_LARGE_HEAP) != 0;
@@ -315,19 +318,11 @@ final class Utils {
     return context.checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
   }
 
+  @TargetApi(Build.VERSION_CODES.FROYO)
   static byte[] toByteArray(InputStream input) throws IOException {
-    /*
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    byte[] buffer = new byte[1024 * 4];
-    int n;
-    while (-1 != (n = input.read(buffer))) {
-      byteArrayOutputStream.write(buffer, 0, n);
-    }
-    return byteArrayOutputStream.toByteArray();
-    */
-
     StringBuilder sb;
     BufferedReader br = null;
+    String result = null;
     try {
       sb = new StringBuilder();
       String line;
@@ -335,23 +330,35 @@ final class Utils {
       while ((line = br.readLine()) != null) {
         sb.append(line);
       }
+      result = sb.toString();
+      int c = result.indexOf(",");
+      if(c != -1){
+        result = result.substring(c + 1);
+      }
+      return Base64.decode(result, Base64.DEFAULT);
     } catch (IOException e) {
-      throw new IOException("Error reading InputStream.");
+      e.printStackTrace();
     } finally {
       if (br != null) {
         try {
           br.close();
         } catch (IOException e) {
-          throw new IOException("Error closing BufferedReader.");
+          e.printStackTrace();
         }
       }
     }
-    String result = sb.toString();
-    int c = result.indexOf(",");
-      if(c != -1){
-          result = result.substring(c + 1);
+    //Error occurred trying to decode the stream so it must not be BASE64
+    if(result != null){
+      return result.getBytes();
+    }else {
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      byte[] buffer = new byte[1024 * 4];
+      int n;
+      while (-1 != (n = input.read(buffer))) {
+        byteArrayOutputStream.write(buffer, 0, n);
       }
-      return Base64.decode(result, Base64.DEFAULT);
+      return byteArrayOutputStream.toByteArray();
+    }
   }
 
   static boolean isWebPFile(InputStream stream) throws IOException {
