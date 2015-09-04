@@ -1,7 +1,7 @@
 Picasso
 =======
 
-A powerful image downloading and caching library for Android
+A powerful image downloading and caching library for Android with Base64 support.
 
 ![](website/static/sample.png)
 
@@ -12,22 +12,21 @@ For more information please see [the website][1]
 Download
 --------
 
-Download [the latest JAR][2] or grab via Gradle:
-```groovy
-compile 'com.squareup.picasso:picasso:2.5.2'
+* Download [the latest AAR from releases][2].
+* Place the AAR in your application's `Library folder` (usually 'libs').
+* Add the following lines to your application's `build.gradle` file:
+
+```Groovy
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    compile(name:'picassobase64-release', ext:'aar')
+}
 ```
-or Maven:
-```xml
-<dependency>
-  <groupId>com.squareup.picasso</groupId>
-  <artifactId>picasso</artifactId>
-  <version>2.5.2</version>
-</dependency>
-```
-
-Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
-
-
 
 ProGuard
 --------
@@ -58,5 +57,4 @@ License
 
 
  [1]: http://square.github.io/picasso/
- [2]: https://search.maven.org/remote_content?g=com.squareup.picasso&a=picasso&v=LATEST
- [snap]: https://oss.sonatype.org/content/repositories/snapshots/
+ [2]: https://github.com/chRyNaN/PicassoBase64/releases/download/v1.0.0/picassobase64-release.aar
