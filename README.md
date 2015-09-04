@@ -1,11 +1,11 @@
-Picasso
+PicassoBase64
 =======
 
 A powerful image downloading and caching library for Android with Base64 support.
 
 ![](website/static/sample.png)
 
-For more information please see [the website][1]
+Use exactly as you would the Picasso library. For more information please see [the Picasso website][1].
 
 
 
